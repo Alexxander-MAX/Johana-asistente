@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Johana - Tu Asistente</title>
+  <style>
+    body {
+      background: #f4f4f9;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .chat-container {
+      background: white;
+      width: 400px;
+      max-height: 600px;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #db3d88;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+    }
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+    }
+    .chat-input button {
+      background: #db3d88;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .user {
+      text-align: right;
+      color: #333;
+    }
+    .johana {
+      text-align: left;
+      color: #db3d88;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">Johana 💖</div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Escribe algo...">
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage("user", message);
+      input.value = "";
+
+      appendMessage("johana", "Pensando... 💭");
+
+      const response = await getJohanaResponse(message);
+      document.getElementById("chat-messages").lastChild.remove(); // remove "Pensando..."
+      appendMessage("johana", response);
+    }
+
+    function appendMessage(sender, text) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `message ${sender}`;
+      msgDiv.textContent = text;
+      document.getElementById("chat-messages").appendChild(msgDiv);
+      document.getElementById("chat-messages").scrollTop = document.getElementById("chat-messages").scrollHeight;
+    }
+
+    async function getJohanaResponse(userMessage) {
+      const apiKey = "const apiKey = "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";
+";
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "Eres Johana, una asistente formal y cariñosa que ayuda con amor y respeto." },
+            { role: "user", content: userMessage }
+          ]
+        })
+      });
+
+      const data = await response.json();
+      return data.choices[0].message.content;
+    }
+  </script>
+</body>
+</html>
